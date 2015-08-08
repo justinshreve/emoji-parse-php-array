@@ -1,7 +1,9 @@
 # emoji-parse-php-array
 Creates a PHP array of emoji from the unicode.org site
 
-Fork of https://github.com/iamcal/php-emoji (basically just ripped out the relevant parts and changed some of the output comments/names
+Fork of https://github.com/iamcal/php-emoji (basically just ripped out the relevant parts and changed some of the output comments/names)
+
+Only returns names and HTML output
 
 Original code by Cal Henderson cal@iamcal.com
 
