@@ -79,10 +79,6 @@
 	echo "\t);\n";
 
 
-	echo file_get_contents('core_functions.php');
-
-
-
 	##########################################################################################
 
 	function get_all_kaomoji($mapping){
