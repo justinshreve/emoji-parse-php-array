@@ -9,7 +9,6 @@ Original code by Cal Henderson cal@iamcal.com
 
 ```
 wget http://www.unicode.org/~scherer/emoji4unicode/snapshot/full.html
-patch < source_html.patch
 php parse.php full.html > catalog.php
 php build_map.php > emoji-maps.php
 ```
