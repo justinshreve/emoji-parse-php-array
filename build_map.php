@@ -3,7 +3,7 @@
 	# Forked from https://github.com/iamcal/php-emoji/commit/847e9e7f149a63694dbc4f2657bd07edbe00ac2d
 	include('catalog.php');
 
-	$items = $catalog;
+	$items = $emoji_catalog;
 
 
 	#
@@ -13,23 +13,7 @@
 	$maps = array();
 
 	$maps['names']		= make_names_map($items);
-	$maps['kaomoji']	= get_all_kaomoji($items);
-
-	#fprintf(STDERR, "fix Geta Mark ()  '〓' (U+3013)\n");
-	#$items = fix_geta_mark($items);
-
-	$maps["unified_to_docomo"]	= make_mapping($items, 'docomo');
-	$maps["unified_to_kddi"]	= make_mapping($items, 'au');
-	$maps["unified_to_softbank"]	= make_mapping($items, 'softbank');
-	$maps["unified_to_google"]	= make_mapping($items, 'google');
-
-	$maps["docomo_to_unified"]	= make_mapping_flip($items, 'docomo');
-	$maps["kddi_to_unified"]	= make_mapping_flip($items, 'au');
-	$maps["softbank_to_unified"]	= make_mapping_flip($items, 'softbank');
-	$maps["google_to_unified"]	= make_mapping_flip($items, 'google');
-
-	$maps["unified_to_html"]	= make_html_map($items);
-
+	$maps['html']	    = make_html_map($items);
 
 	#
 	# output
@@ -38,68 +22,48 @@
 
 	echo "<"."?php\n";
 
-	echo "\n";
-	echo "\t/**\n";
-	echo "\t * WARNING:\n";
-	echo "\t * This code is auto-generated. Do not modify it manually.\n";
-	echo "\t * @see https://github.com/justinshreve/emoji-parse-php-array\n";
+	echo "/**\n";
+	echo " * WARNING:\n";
+	echo " * This code is auto-generated. Do not modify it manually.\n";
+	echo " * @see https://github.com/justinshreve/emoji-parse-php-array\n";
+	echo "*/";
 	echo "\n";
 
-	echo "\t\$emoji_maps = array(\n";
+	echo "\$emoji_maps = array(\n";
 
-	echo "\t\t'names' => array(\n";
+	echo "\t'names' => array(\n";
 
 	foreach ($maps['names'] as $k => $v){
 
 		$key_enc = format_string($k);
 		$name_enc = "'".AddSlashes($v)."'";
-		echo "\t\t\t$key_enc => $name_enc,\n";
+		echo "\t\t$key_enc => $name_enc,\n";
 	}
 
-	echo "\t\t),\n";
+	echo "\t),\n";
 
 	foreach ($maps as $k => $v){
 
 		if ($k == 'names') continue;
 
-		echo "\t\t'$k' => array(\n";
+		echo "\t'$k' => array(\n";
 
 		$count = 0;
-		echo "\t\t\t";
+		echo "\t\t";
 		foreach ($v as $k2 => $v2){
 			$count++;
-			if ($count % 5 == 0) echo "\n\t\t\t";
+			if ($count % 5 == 0) echo "\n\t\t";
 			echo format_string($k2).'=>'.format_string($v2).', ';
 		}
 		echo "\n";
 
-		echo "\t\t),\n";
+		echo "\t),\n";
 	}
 
-	echo "\t);\n";
+	echo ");\n";
 
 
 	##########################################################################################
-
-	function get_all_kaomoji($mapping){
-		$arr = array();
-
-		foreach ($mapping as $map){
-			if (isset($map['docomo']['kaomoji']) ) {
-				$arr[ $map['docomo']['kaomoji'] ] = '1';
-			}
-
-			if (isset($map['au']['kaomoji']) ) {
-				$arr[ $map['au']['kaomoji'] ] = '1';
-			}
-
-			if (isset($map['softbank']['kaomoji']) ) {
-				$arr[ $map['softbank']['kaomoji'] ] = '1';
-			}
-		}
-
-		return array_keys($arr);
-	}
 
 	function make_names_map($map){
 
@@ -128,34 +92,6 @@
 		}
 
 		return $out;
-	}
-
-	function make_mapping($mapping, $dest){
-
-		$result = array();
-
-		foreach ($mapping as $map){
-
-			$src_char = unicode_bytes($map['unicode']);
-
-			if (!empty($map[$dest]['unicode']) && is_array($map[$dest]['unicode']) && count($map[$dest]['unicode'])){
-
-				$dest_char = unicode_bytes($map[$dest]['unicode']);
-			}else{
-				$dest_char = $map[$dest]['kaomoji'];
-			}
-
-			$result[$src_char] = $dest_char;
-		}
-
-		return $result;
-	}
-
-	function make_mapping_flip($mapping, $src){
-		$result = make_mapping($mapping, $src);
-		$result = array_flip($result);
-		unset($result[""]);
-		return $result;
 	}
 
 	function unicode_bytes($cps){
